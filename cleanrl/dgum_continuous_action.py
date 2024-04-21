@@ -189,11 +189,12 @@ poetry run pip install "stable_baselines3==2.0.0a1"
     qf1_online = GaussianCritic(envs).to(device)
     qf1_target = GaussianCritic(envs).to(device)
 
-
     target_actor = Actor(envs).to(device)
+
+    # Initialize the target model parameters
     target_actor.load_state_dict(actor.state_dict())
     qf1_target.load_state_dict(qf1_online.state_dict())
-
+    
     q_optimizer = optim.Adam(list(qf1_online.parameters()), lr=args.learning_rate)
     actor_optimizer = optim.Adam(list(actor.parameters()), lr=args.learning_rate)
 
@@ -216,12 +217,15 @@ poetry run pip install "stable_baselines3==2.0.0a1"
         else:
             with torch.no_grad():
                 actions = actor(torch.Tensor(obs).to(device))
-                actions += torch.normal(0, actor.action_scale * args.exploration_noise)
+
+                # Additive noise to action, should set exploration_noise to 0.2
+                actions += torch.clamp(torch.normal(0, actor.action_scale * args.exploration_noise) -0.3, 0.3) # should be 0.2, and clipped to 0.3
                 actions = actions.cpu().numpy().clip(envs.single_action_space.low, envs.single_action_space.high)
 
         # TRY NOT TO MODIFY: execute the game and log data.
         next_obs, rewards, terminations, truncations, infos = envs.step(actions)
 
+        # qf1_val = qf1_target.forward()
         # TRY NOT TO MODIFY: record rewards for plotting purposes
         if "final_info" in infos:
             for info in infos["final_info"]:
@@ -230,7 +234,7 @@ poetry run pip install "stable_baselines3==2.0.0a1"
                 writer.add_scalar("charts/episodic_length", info["episode"]["l"], global_step)
                 break
 
-        # TRY NOT TO MODIFY: save data to reply buffer; handle `final_observation`
+        # TRY NOT TO MODIFY: save data to replay buffer; handle `final_observation`
         real_next_obs = next_obs.copy()
         for idx, trunc in enumerate(truncations):
             if trunc:
@@ -245,19 +249,39 @@ poetry run pip install "stable_baselines3==2.0.0a1"
             data = rb.sample(args.batch_size)
             with torch.no_grad():
                 next_state_actions = target_actor(data.next_observations)
-                qf1_next_target = qf1_target(data.next_observations, next_state_actions)
-                next_q_value = data.rewards.flatten() + (1 - data.dones.flatten()) * args.gamma * (qf1_next_target).view(-1)
+                qf1_next_target, qf1_target_std = qf1_target(data.next_observations, next_state_actions)
+                # print("Shapes of Critic Outputs", qf1_next_target.shape, qf1_target_std.shape)
+                qf1_target_value = data.rewards.flatten() + (1 - data.dones.flatten()) * args.gamma * (qf1_next_target).view(-1)
+                # next_q_value = data.rewards.flatten() + (1 - data.dones.flatten()) * args.gamma * (qf1_next_target).view(-1)
+                # print("Shape of Next Q: ",qf1_target_value.shape) 
+                # including the pessimism factor in q_value estimate from q_target
+                qf1_target_value += qf1_target_std.view(-1) * args.pessimism_factor * args.gamma
+                
+            qf1_online_value, qf1_online_std = qf1_online(data.observations, data.actions)
 
-            qf1_a_values = qf1_online(data.observations, data.actions).view(-1)
-            qf1_loss = F.mse_loss(qf1_a_values, next_q_value)
+            qf1_online_value = qf1_online_value.view(-1)
+            qf1_online_std = qf1_online_std.view(-1)
+            
+            qf1_std_ng = qf1_online_std.detach()
 
+            # Clean RL Previous Code
+            # qf1_loss = F.mse_loss(qf1_a_values, next_q_value)
+
+            # Beta-NLL Code
+            td_loss = qf1_online_value - qf1_target_value
+            qf1_loss = torch.log(qf1_online_std) + 0.5 * ((td_loss/qf1_online_std) ** 2)
+            qf1_loss *= qf1_std_ng
+            qf1_loss = qf1_loss.mean()
+            
             # optimize the model
             q_optimizer.zero_grad()
             qf1_loss.backward()
             q_optimizer.step()
 
             if global_step % args.policy_frequency == 0:
-                actor_loss = -qf1(data.observations, actor(data.observations)).mean()
+                    
+                qf1_online_value, _ = qf1_online(data.observations, actor(data.observations))
+                actor_loss = -qf1_online_value.mean()
                 actor_optimizer.zero_grad()
                 actor_loss.backward()
                 actor_optimizer.step()
@@ -265,11 +289,11 @@ poetry run pip install "stable_baselines3==2.0.0a1"
                 # update the target network
                 for param, target_param in zip(actor.parameters(), target_actor.parameters()):
                     target_param.data.copy_(args.tau * param.data + (1 - args.tau) * target_param.data)
-                for param, target_param in zip(qf1.parameters(), qf1_target.parameters()):
+                for param, target_param in zip(qf1_online.parameters(), qf1_target.parameters()):
                     target_param.data.copy_(args.tau * param.data + (1 - args.tau) * target_param.data)
 
             if global_step % 100 == 0:
-                writer.add_scalar("losses/qf1_values", qf1_a_values.mean().item(), global_step)
+                writer.add_scalar("losses/qf1_values", qf1_online_value.mean().item(), global_step)
                 writer.add_scalar("losses/qf1_loss", qf1_loss.item(), global_step)
                 writer.add_scalar("losses/actor_loss", actor_loss.item(), global_step)
                 print("SPS:", int(global_step / (time.time() - start_time)))
