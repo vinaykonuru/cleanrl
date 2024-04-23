@@ -1,0 +1,24 @@
+libEGL warning: egl: failed to create dri2 screen
+libEGL warning: failed to open /dev/dri/card4: Permission denied
+
+libEGL warning: egl: failed to create dri2 screen
+libEGL warning: failed to open /dev/dri/card3: Permission denied
+
+libEGL warning: egl: failed to create dri2 screen
+libEGL warning: failed to open /dev/dri/card2: Permission denied
+
+libEGL warning: egl: failed to create dri2 screen
+libEGL warning: failed to open /dev/dri/card1: Permission denied
+
+/home/vkonuru/.conda/envs/cleanRL/lib/python3.9/site-packages/torch/utils/tensorboard/__init__.py:4: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  if not hasattr(tensorboard, "__version__") or LooseVersion(
+/home/vkonuru/.conda/envs/cleanRL/lib/python3.9/site-packages/torch/utils/tensorboard/__init__.py:6: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  ) < LooseVersion("1.15"):
+/home/vkonuru/.conda/envs/cleanRL/lib/python3.9/site-packages/gymnasium/utils/passive_env_checker.py:164: UserWarning: [33mWARN: The obs returned by the `reset()` method was expecting numpy array dtype to be <class 'numpy.float32'>, actual type: float64[0m
+  logger.warn(
+/home/vkonuru/.conda/envs/cleanRL/lib/python3.9/site-packages/gymnasium/utils/passive_env_checker.py:188: UserWarning: [33mWARN: The obs returned by the `reset()` method is not within the observation space.[0m
+  logger.warn(f"{pre} is not within the observation space.")
+/home/vkonuru/.conda/envs/cleanRL/lib/python3.9/site-packages/gymnasium/utils/passive_env_checker.py:164: UserWarning: [33mWARN: The obs returned by the `step()` method was expecting numpy array dtype to be <class 'numpy.float32'>, actual type: float64[0m
+  logger.warn(
+/home/vkonuru/.conda/envs/cleanRL/lib/python3.9/site-packages/gymnasium/utils/passive_env_checker.py:188: UserWarning: [33mWARN: The obs returned by the `step()` method is not within the observation space.[0m
+  logger.warn(f"{pre} is not within the observation space.")
