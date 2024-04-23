@@ -10,10 +10,10 @@
 #SBATCH --mail-type=begin        # send email when job begins
 #SBATCH --mail-type=end          # send email when job ends
 #SBATCH --mail-type=fail         # send email if job fails
-#SBATCH --mail-user=vkonuru@princeton.edu
+#SBATCH --mail-user=rswamy@princeton.edu
 
 module purge
 module load anaconda3/2023.9
-conda activate cleanRL
+conda activate cleanrl
 
 python tests/test_doublegum.py --num-trials 4 --total-timesteps 600000 --learning-starts 30000
