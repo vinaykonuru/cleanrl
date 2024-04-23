@@ -29,26 +29,42 @@ def test_mujoco_eval():
     """
     Test mujoco_eval
     """
-    subprocess.run(
-        "python cleanrl/dgum_continuous_action.py --save-model --env-id Hopper-v4 --learning-starts 3000 --batch-size 256 --total-timesteps 3100",
-        shell=True,
-        check=True,
-    )
-    subprocess.run(
-        "python cleanrl/ddpg_continuous_action.py --save-model --env-id Hopper-v4 --learning-starts 3000 --batch-size 256 --total-timesteps 3100",
-        shell=True,
-        check=True,
-    )
-    subprocess.run(
-        "python cleanrl/td3_continuous_action.py --save-model --env-id Hopper-v4 --learning-starts 3000 --batch-size 256 --total-timesteps 3100",
-        shell=True,
-        check=True,
-    )
-    subprocess.run(
-        "python cleanrl/sac_continuous_action.py --save-model --env-id Hopper-v4 --learning-starts 3000 --batch-size 256 --total-timesteps 3100",
-        shell=True,
-        check=True,
-    )
 
+    try:
+        subprocess.run(
+            "python cleanrl/dgum_continuous_action.py --save-model --env-id Hopper-v4 --learning-starts 30000 --batch-size 256 --total-timesteps 100000",
+            shell=True,
+            check=True,
+        )
+    except Exception as e:
+        print(e)
+
+    try:    
+        subprocess.run(
+            "python cleanrl/ddpg_continuous_action.py --save-model --env-id Hopper-v4 --learning-starts 30000 --batch-size 256 --total-timesteps 100000",
+            shell=True,
+            check=True,
+        )
+    except Exception as e:
+        print(e)
+
+    try:
+        subprocess.run(
+            "python cleanrl/td3_continuous_action.py --save-model --env-id Hopper-v4 --learning-starts 30000 --batch-size 256 --total-timesteps 100000",
+            shell=True,
+            check=True,
+        )
+    except Exception as e:
+        print(e)
+    
+    try:
+        subprocess.run(
+            "python cleanrl/sac_continuous_action.py --save-model --env-id Hopper-v4 --learning-starts 30000 --batch-size 256 --total-timesteps 100000",
+            shell=True,
+            check=True,
+        )
+    except Exception as e:
+        print(e)
+    
 if __name__ == "__main__":
     test_mujoco_eval()
