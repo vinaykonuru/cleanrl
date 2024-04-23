@@ -33,7 +33,8 @@ class Args:
     """the entity (team) of wandb's project"""
     capture_video: bool = False
     """whether to capture videos of the agent performances (check out `videos` folder)"""
-
+    save_model: bool = False
+    """whether to save model into the `runs/{run_name}` folder"""
     # Algorithm specific arguments
     env_id: str = "Hopper-v4"
     """the environment id of the task"""
@@ -307,6 +308,10 @@ poetry run pip install "stable_baselines3==2.0.0a1"
                 writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
                 if args.autotune:
                     writer.add_scalar("losses/alpha_loss", alpha_loss.item(), global_step)
+    if args.save_model:
+        model_path = f"runs/{run_name}/{args.exp_name}.cleanrl_model"
+        torch.save((actor.state_dict(), qf1.state_dict(), qf2.state_dict()), model_path)
+        print(f"model saved to {model_path}")
 
     envs.close()
     writer.close()

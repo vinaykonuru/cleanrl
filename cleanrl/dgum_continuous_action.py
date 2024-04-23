@@ -13,6 +13,7 @@ import torch.optim as optim
 import tyro
 from stable_baselines3.common.buffers import ReplayBuffer
 from torch.utils.tensorboard import SummaryWriter
+from cleanrl_utils.evals.ddpg_eval import evaluate
 
 
 @dataclass
@@ -305,7 +306,8 @@ poetry run pip install "stable_baselines3==2.0.0a1"
         model_path = f"runs/{run_name}/{args.exp_name}.cleanrl_model"
         torch.save((actor.state_dict(), qf1_online.state_dict()), model_path)
         print(f"model saved to {model_path}")
-        from cleanrl_utils.evals.ddpg_eval import evaluate
+        print(os.getcwd())
+        from cleanrl_utils.evals.dgum_eval import evaluate
 
         episodic_returns = evaluate(
             model_path,
@@ -313,7 +315,7 @@ poetry run pip install "stable_baselines3==2.0.0a1"
             args.env_id,
             eval_episodes=10,
             run_name=f"{run_name}-eval",
-            Model=(Actor, QNetwork),
+            Model=(Actor, GaussianCritic),
             device=device,
             exploration_noise=args.exploration_noise,
         )
