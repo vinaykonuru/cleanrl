@@ -36,7 +36,7 @@ class Args:
     save_model: bool = False
     """whether to save model into the `runs/{run_name}` folder"""
     # Algorithm specific arguments
-    env_id: str = "Hopper-v4"
+    env_id: str = "Walker2d-v4"
     """the environment id of the task"""
     total_timesteps: int = 1000000
     """total timesteps of the experiments"""
