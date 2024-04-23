@@ -303,7 +303,7 @@ poetry run pip install "stable_baselines3==2.0.0a1"
 
     if args.save_model:
         model_path = f"runs/{run_name}/{args.exp_name}.cleanrl_model"
-        torch.save((actor.state_dict(), qf1.state_dict()), model_path)
+        torch.save((actor.state_dict(), qf1_online.state_dict()), model_path)
         print(f"model saved to {model_path}")
         from cleanrl_utils.evals.ddpg_eval import evaluate
 
