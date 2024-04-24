@@ -2,6 +2,7 @@ import subprocess
 import tyro
 import os
 from dataclasses import dataclass
+import numpy as np
 
 
 @dataclass
@@ -59,20 +60,25 @@ def test_mujoco_eval(args):
     """
     Test mujoco_eval
     """
+
+    np.random.seed(args.seed)
+
     for _ in range(args.num_trials):
 
-        # try:
-        #     subprocess.run(
-        #         f"python cleanrl/dgum_continuous_action.py --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
-        #         shell=True,
-        #         check=True,
-        #     )
-        # except Exception as e:
-        #     print(e)
+        rand_int = np.random.randint(low=0, high=1000)
+
+        try:
+            subprocess.run(
+                f"python cleanrl/dgum_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
+                shell=True,
+                check=True,
+            )
+        except Exception as e:
+            print(e)
 
         try:    
             subprocess.run(
-                f"python cleanrl/ddpg_continuous_action.py --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
+                f"python cleanrl/ddpg_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
                 shell=True,
                 check=True,
             )
@@ -81,7 +87,7 @@ def test_mujoco_eval(args):
 
         try:
             subprocess.run(
-                f"python cleanrl/td3_continuous_action.py --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
+                f"python cleanrl/td3_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
                 shell=True,
                 check=True,
             )
@@ -90,7 +96,7 @@ def test_mujoco_eval(args):
         
         try:
             subprocess.run(
-                f"python cleanrl/sac_continuous_action.py --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
+                f"python cleanrl/sac_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
                 shell=True,
                 check=True,
             )
