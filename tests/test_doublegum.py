@@ -61,14 +61,14 @@ def test_mujoco_eval(args):
     """
     for _ in range(args.num_trials):
 
-        try:
-            subprocess.run(
-                f"python cleanrl/dgum_continuous_action.py --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
-                shell=True,
-                check=True,
-            )
-        except Exception as e:
-            print(e)
+        # try:
+        #     subprocess.run(
+        #         f"python cleanrl/dgum_continuous_action.py --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
+        #         shell=True,
+        #         check=True,
+        #     )
+        # except Exception as e:
+        #     print(e)
 
         try:    
             subprocess.run(
