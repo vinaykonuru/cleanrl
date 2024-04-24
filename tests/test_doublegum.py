@@ -52,7 +52,7 @@ class Args:
     """the frequency of training policy (delayed)"""
     noise_clip: float = 0.5
     """noise clip parameter of the Target Policy Smoothing Regularization"""
-    pessimism_factor: float = -0.1
+    pessimism_factor: float = -0.5
     """ pessimism factor for the target Q """
 
 def test_mujoco_eval(args):
