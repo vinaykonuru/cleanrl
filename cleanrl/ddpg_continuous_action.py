@@ -36,6 +36,7 @@ class Args:
     """whether to capture videos of the agent performances (check out `videos` folder)"""
     save_model: bool = False
     """whether to save model into the `runs/{run_name}` folder"""
+    save_model_folder: str = None
     upload_model: bool = False
     """whether to upload the saved model to huggingface"""
     hf_entity: str = ""
@@ -144,7 +145,10 @@ poetry run pip install "stable_baselines3==2.0.0a1"
             monitor_gym=True,
             save_code=True,
         )
-    writer = SummaryWriter(f"runs/{run_name}")
+    if args.save_model_folder is None:
+        writer = SummaryWriter(f"runs/{run_name}")
+    else:
+        writer = SummaryWriter(f"runs/{args.save_model_folder}/{run_name}")
     writer.add_text(
         "hyperparameters",
         "|param|value|\n|-|-|\n%s" % ("\n".join([f"|{key}|{value}|" for key, value in vars(args).items()])),
@@ -252,7 +256,10 @@ poetry run pip install "stable_baselines3==2.0.0a1"
                 writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
 
     if args.save_model:
-        model_path = f"runs/{run_name}/{args.exp_name}.cleanrl_model"
+        if args.save_model_folder is None:
+            model_path = f"runs/{run_name}/{args.exp_name}.cleanrl_model"
+        else:
+            model_path = f"runs/{args.save_model_folder}/{run_name}/{args.exp_name}.cleanrl_model"
         torch.save((actor.state_dict(), qf1.state_dict()), model_path)
         print(f"model saved to {model_path}")
 
