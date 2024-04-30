@@ -16,4 +16,4 @@ module purge
 module load anaconda3/2023.9
 conda activate cleanRL
 
-python tests/test_doublegum.py --num-trials 4 --total-timesteps 600000 --learning-starts 30000
+python tests/test_doublegum.py --num-trials 8 --total-timesteps 1000000 --learning-starts 30000 --env_id Hopper2d-v4"
