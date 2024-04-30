@@ -13,7 +13,7 @@ import torch.optim as optim
 import tyro
 from stable_baselines3.common.buffers import ReplayBuffer
 from torch.utils.tensorboard import SummaryWriter
-from cleanrl_utils.evals.ddpg_eval import evaluate
+from cleanrl_utils.evals.dgum_eval import evaluate
 
 
 @dataclass
@@ -295,6 +295,21 @@ poetry run pip install "stable_baselines3==2.0.0a1"
                 writer.add_scalar("losses/actor_loss", actor_loss.item(), global_step)
                 print("SPS:", int(global_step / (time.time() - start_time)))
                 writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
+            
+        if global_step % 1000 == 0:
+            states = (actor.state_dict(), qf1_online.state_dict())
+            rollout_rewards = evaluate(
+                states,
+                make_env,
+                args.env_id,
+                eval_episodes=10,
+                run_name=f"{run_name}-eval",
+                Model=(Actor, GaussianCritic),
+                device=device,
+                exploration_noise=args.exploration_noise,
+                interval=True
+            )
+            writer.add_scalar("eval/training_avg", np.mean(rollout_rewards), global_step)
 
     if args.save_model:
         if args.save_model_folder is None:
@@ -304,8 +319,7 @@ poetry run pip install "stable_baselines3==2.0.0a1"
         torch.save((actor.state_dict(), qf1_online.state_dict()), model_path)
         print(f"model saved to {model_path}")
         print(os.getcwd())
-        from cleanrl_utils.evals.dgum_eval import evaluate
-
+        
         episodic_returns = evaluate(
             model_path,
             make_env,

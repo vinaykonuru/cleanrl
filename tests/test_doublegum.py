@@ -29,7 +29,7 @@ class Args:
     """whether to upload the saved model to huggingface"""
     hf_entity: str = ""
     """the user or org name of the model repository from the Hugging Face Hub"""
-
+    save_model_folder: str = None
     # Algorithm specific arguments
     env_id: str = "Walker2d-v4"
     """the environment id of the Atari game"""
@@ -69,7 +69,7 @@ def test_mujoco_eval(args):
 
         try:
             subprocess.run(
-                f"python cleanrl/dgum_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
+                f"python cleanrl/dgum_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}",
                 shell=True,
                 check=True,
             )
@@ -78,7 +78,7 @@ def test_mujoco_eval(args):
 
         try:    
             subprocess.run(
-                f"python cleanrl/ddpg_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
+                f"python cleanrl/ddpg_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}",
                 shell=True,
                 check=True,
             )
@@ -87,7 +87,7 @@ def test_mujoco_eval(args):
 
         try:
             subprocess.run(
-                f"python cleanrl/td3_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
+                f"python cleanrl/td3_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}",
                 shell=True,
                 check=True,
             )
@@ -96,7 +96,7 @@ def test_mujoco_eval(args):
         
         try:
             subprocess.run(
-                f"python cleanrl/sac_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps}",
+                f"python cleanrl/sac_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}",
                 shell=True,
                 check=True,
             )

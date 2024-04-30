@@ -13,16 +13,23 @@ def evaluate(
     run_name: str,
     Model: nn.Module,
     device: torch.device = torch.device("cpu"),
-    capture_video: bool = True,
+    capture_video: bool = False,
     exploration_noise: float = 0.1,
+    interval = False,
 ):
     envs = gym.vector.SyncVectorEnv([make_env(env_id, 0, 0, capture_video, run_name)])
     actor = Model[0](envs).to(device)
     qf = Model[1](envs).to(device)
-    actor_params, qf_params = torch.load(model_path, map_location=device)
-    actor.load_state_dict(actor_params)
+    # If interval, load states directly
+    if not interval:
+        actor_params, qf_params = torch.load(model_path, map_location=device)
+        actor.load_state_dict(actor_params)
+        qf.load_state_dict(qf_params)
+    else:
+        actor.load_state_dict(model_path[0])
+        qf.load_state_dict(model_path[1])
+
     actor.eval()
-    qf.load_state_dict(qf_params)
     qf.eval()
     # note: qf is not used in this script
 

@@ -16,4 +16,4 @@ module purge
 module load anaconda3/2023.9
 conda activate cleanrl
 
-python tests/test_doublegum.py --num-trials 4 --total-timesteps 600000 --learning-starts 30000
+python tests/test_doublegum.py --num-trials 1 --env-id HalfCheetah-v4 --total-timesteps 600000 --learning-starts 30000

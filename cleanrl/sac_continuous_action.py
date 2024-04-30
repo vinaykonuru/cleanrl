@@ -13,6 +13,7 @@ import torch.optim as optim
 import tyro
 from stable_baselines3.common.buffers import ReplayBuffer
 from torch.utils.tensorboard import SummaryWriter
+from cleanrl_utils.evals.sac_eval import evaluate
 
 
 @dataclass
@@ -316,6 +317,21 @@ poetry run pip install "stable_baselines3==2.0.0a1"
                 writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
                 if args.autotune:
                     writer.add_scalar("losses/alpha_loss", alpha_loss.item(), global_step)
+        if global_step % 1000 == 0:
+            states = (actor.state_dict(), qf1.state_dict(), qf2.state_dict())
+            rollout_rewards = evaluate(
+                states,
+                make_env,
+                args.env_id,
+                eval_episodes=10,
+                run_name=f"{run_name}-eval",
+                Model=(Actor, SoftQNetwork),
+                device=device,
+                interval=True
+            )   
+            writer.add_scalar("eval/training_avg", np.mean(rollout_rewards), global_step)
+
+
     if args.save_model:
         if args.save_model_folder is None:
             model_path = f"runs/{run_name}/{args.exp_name}.cleanrl_model"
@@ -323,6 +339,21 @@ poetry run pip install "stable_baselines3==2.0.0a1"
             model_path = f"runs/{args.save_model_folder}/{run_name}/{args.exp_name}.cleanrl_model"
         torch.save((actor.state_dict(), qf1.state_dict(), qf2.state_dict()), model_path)
         print(f"model saved to {model_path}")
+        
+
+        episodic_returns = evaluate(
+            model_path,
+            make_env,
+            args.env_id,
+            eval_episodes=10,
+            run_name=f"{run_name}-eval",
+            Model=(Actor, SoftQNetwork),
+            device=device,
+        )
+        for idx, episodic_return in enumerate(episodic_returns):
+            writer.add_scalar("eval/episodic_return", episodic_return, idx)
+
+
 
     envs.close()
     writer.close()

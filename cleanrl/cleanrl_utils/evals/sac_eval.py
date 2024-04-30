@@ -15,13 +15,13 @@ def evaluate(
     device: torch.device = torch.device("cpu"),
     capture_video: bool = False,
     exploration_noise: float = 0.1,
-    interval = False
+    interval = False,
 ):
     envs = gym.vector.SyncVectorEnv([make_env(env_id, 0, 0, capture_video, run_name)])
     actor = Model[0](envs).to(device)
     qf1 = Model[1](envs).to(device)
     qf2 = Model[1](envs).to(device)
-    
+
     if not interval:
         actor_params, qf1_params, qf2_params = torch.load(model_path, map_location=device)
         actor.load_state_dict(actor_params)
@@ -31,7 +31,7 @@ def evaluate(
         actor.load_state_dict(model_path[0])
         qf1.load_state_dict(model_path[1])
         qf2.load_state_dict(model_path[2])
-    
+
     actor.eval()
     qf1.eval()
     qf2.eval()
@@ -41,9 +41,8 @@ def evaluate(
     episodic_returns = []
     while len(episodic_returns) < eval_episodes:
         with torch.no_grad():
-            actions = actor(torch.Tensor(obs).to(device))
-            actions += torch.normal(0, actor.action_scale * exploration_noise)
-            actions = actions.cpu().numpy().clip(envs.single_action_space.low, envs.single_action_space.high)
+            actions, _, _ = actor.get_action(torch.Tensor(obs).to(device))
+            actions = actions.cpu().numpy()
 
         next_obs, _, _, _, infos = envs.step(actions)
         if "final_info" in infos:
