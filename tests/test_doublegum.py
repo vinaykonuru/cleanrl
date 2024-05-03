@@ -15,6 +15,7 @@ class Args:
     """if toggled, `torch.backends.cudnn.deterministic=False`"""
     cuda: bool = True
     """if toggled, cuda will be enabled by default"""
+    double_layer: bool = False
     track: bool = False
     """if toggled, this experiment will be tracked with Weights and Biases"""
     wandb_project_name: str = "cleanRL"
@@ -69,7 +70,7 @@ def test_mujoco_eval(args):
 
         try:
             subprocess.run(
-                f"python cleanrl/dgum_continuous_action.py --seed {rand_int} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}",
+                f"python cleanrl/dgum_continuous_action.py --seed {rand_int} --double-layer {args.double_layer} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}",
                 shell=True,
                 check=True,
             )

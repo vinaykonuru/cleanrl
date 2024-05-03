@@ -67,7 +67,7 @@ class Args:
     """the frequency of training policy (delayed)"""
     noise_clip: float = 0.5
     """noise clip parameter of the Target Policy Smoothing Regularization"""
-
+    double_layer: bool = False
 
 def make_env(env_id, seed, idx, capture_video, run_name):
     def thunk():
@@ -96,7 +96,8 @@ class QNetwork(nn.Module):
         x = torch.cat([x, a], 1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
+        if args.double_layer:
+            x = F.relu(self.fc3(x))
         x = self.fc4(x)
         return x
 
@@ -119,7 +120,8 @@ class Actor(nn.Module):
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
+        if args.double_layer:
+            x = F.relu(self.fc3(x))
         x = torch.tanh(self.fc_mu(x))
         return x * self.action_scale + self.action_bias
 

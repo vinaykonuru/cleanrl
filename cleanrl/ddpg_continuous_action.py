@@ -41,7 +41,6 @@ class Args:
     """whether to upload the saved model to huggingface"""
     hf_entity: str = ""
     """the user or org name of the model repository from the Hugging Face Hub"""
-
     # Algorithm specific arguments
     env_id: str = "Walker2d-v4"
     """the environment id of the Atari game"""
@@ -65,6 +64,7 @@ class Args:
     """the frequency of training policy (delayed)"""
     noise_clip: float = 0.5
     """noise clip parameter of the Target Policy Smoothing Regularization"""
+    double_layer: bool = False
 
 
 def make_env(env_id, seed, idx, capture_video, run_name):
@@ -94,7 +94,8 @@ class QNetwork(nn.Module):
         x = torch.cat([x, a], 1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
+        if args.double_layer:
+            x = F.relu(self.fc3(x))
         x = self.fc4(x)
         return x
 
@@ -117,7 +118,8 @@ class Actor(nn.Module):
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
+        if args.double_layer:
+            x = F.relu(self.fc3(x))
         x = torch.tanh(self.fc_mu(x))
         return x * self.action_scale + self.action_bias
 

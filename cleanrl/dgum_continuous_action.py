@@ -67,6 +67,7 @@ class Args:
     """noise clip parameter of the Target Policy Smoothing Regularization"""
     pessimism_factor: float = -0.5
     """ pessimism factor for the target Q """
+    double_layer: bool = True
 
 
 def make_env(env_id, seed, idx, capture_video, run_name):
@@ -102,7 +103,8 @@ class GaussianCritic(nn.Module):
         x = torch.cat([x, a], 1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
+        if args.double_layer:
+            x = F.relu(self.fc3(x))
         estimate = self.fc4(x)
 
         std = F.softplus(self.fc_std(x))  + 1e-5
@@ -127,7 +129,8 @@ class Actor(nn.Module):
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
+        if args.double_layer:
+            x = F.relu(self.fc3(x))
         x = torch.tanh(self.fc_mu(x))
         return x * self.action_scale + self.action_bias
 

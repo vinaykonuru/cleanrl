@@ -66,6 +66,7 @@ class Args:
     """Entropy regularization coefficient."""
     autotune: bool = True
     """automatic tuning of the entropy coefficient"""
+    double_layer: bool = False
 
 
 def make_env(env_id, seed, idx, capture_video, run_name):
@@ -95,7 +96,8 @@ class SoftQNetwork(nn.Module):
         x = torch.cat([x, a], 1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
+        if args.double_layer:
+            x = F.relu(self.fc3(x))
         x = self.fc4(x)
         return x
 
@@ -123,7 +125,8 @@ class Actor(nn.Module):
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
+        if args.double_layer:
+            x = F.relu(self.fc3(x))
         mean = self.fc_mean(x)
         log_std = self.fc_logstd(x)
         log_std = torch.tanh(log_std)
