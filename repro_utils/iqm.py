@@ -47,7 +47,6 @@ def get_iqm(sub_folder_path, algos):
     result_dict = {}
 
     for algo in algos:
-        print(algo)
         event_paths = sorted(glob(os.path.join(sf_path,f"*{algo}_cont*","events.out*")))
         print(event_paths)
 
@@ -60,12 +59,15 @@ def get_iqm(sub_folder_path, algos):
         iqm = []
         
         for ev_path in event_paths:
-            data = load_tensorboard_events(ev_path)['eval/training_avg']
-            if steps is None:
-                steps = data['steps']
+            try:
+                data = load_tensorboard_events(ev_path)['eval/training_avg']
+            except:
+                continue
+            steps = data['steps']
 
+            if len(data['values']) != 500:
+                continue
             ep_returns.append(data['values'])
-
         ep_returns = np.array(ep_returns).T
 
         
@@ -126,3 +128,4 @@ def calculate_env_iqms(algs, envs, smoothing_weight):
         save_dict_to_file(results, f'repro_utils/iqm_results/results_{env}.json')
         env_results.append(results)
     return env_results
+

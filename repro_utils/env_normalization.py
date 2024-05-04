@@ -11,7 +11,10 @@ def extract_scalar_from_event_file(event_file):
     event_acc.Reload()  # load the events from the file
 
     # Retrieve the scalars you're interested in
-    episodic_return = event_acc.Scalars('eval/training_avg')
+    try:
+        episodic_return = event_acc.Scalars('eval/training_avg')
+    except:
+        episodic_return = None
     return episodic_return
 
 def find_event_files(alg_dir_path):
@@ -33,8 +36,7 @@ def avg_untrained_return(scalars, learning_starts=100):
     avg = 0
     while training_step < learning_starts:
         training_step = scalars[count].step
-        # print(training_step)
-        # print(count)
+
         avg += scalars[count].value
         count += 1
     return avg / count
@@ -49,8 +51,12 @@ def normalization_values(env_name, learning_starts=30000):
     for alg_folder in alg_folders:
         alg_folder_path = os.path.join(base_path, alg_folder)
         event_file = find_event_files(alg_folder_path)
-        training_returns = extract_scalar_from_event_file(event_file)
-       
+
+        if os.path.exists(event_file):
+            training_returns = extract_scalar_from_event_file(event_file)
+        
+        if training_returns is None:
+            continue
         # get the average return of the untrained agents for all iterations
         untrained_avg_returns_sum += avg_untrained_return(training_returns)
 
@@ -60,13 +66,3 @@ def normalization_values(env_name, learning_starts=30000):
 
     min_training_val = untrained_avg_returns_sum / len(alg_folders)
     return min_training_val, max_training_val
-
-# def normalize_algo(env_name):
-#     base_path = f"runs/{env_name}"  # replace with your actual path
-#     alg_folders = get_subdirectories(base_path)
-#     min_norm_val, max_train_val = normalization_values(env_name)
-#     for alg_folder in alg_folders:
-        
-
-
-print(normalization_values("Hopper-v4"))

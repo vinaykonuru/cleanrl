@@ -15,4 +15,16 @@ module purge
 module load anaconda3/2023.9
 conda activate cleanRL
 
-python tests/test_doublegum.py --num-trials 8 --double_layer --total-timesteps 500000 --learning-starts 30000 --env_id Walker2d-v4
+# python tests/test_doublegum.py --num-trials 8 --double_layer --total-timesteps 500000 --learning-starts 30000 --env_id Walker2d-v4
+
+python cleanrl/td3_continuous_action.py --seed 168 --double_layer --save-model --env-id Walker2d-v4 --learning_starts 30000 --total-timesteps 500000 --save-model-folder Walker2d-v4_Group_Norm
+python cleanrl/td3_continuous_action.py --seed 493 --double_layer --save-model --env-id Walker2d-v4 --learning_starts 30000 --total-timesteps 500000 --save-model-folder Walker2d-v4_Group_Norm
+python cleanrl/td3_continuous_action.py --seed 527 --double_layer --save-model --env-id Walker2d-v4 --learning_starts 30000 --total-timesteps 500000 --save-model-folder Walker2d-v4_Group_Norm
+python cleanrl/td3_continuous_action.py --seed 534 --double_layer --save-model --env-id Walker2d-v4 --learning_starts 30000 --total-timesteps 500000 --save-model-folder Walker2d-v4_Group_Norm
+python cleanrl/td3_continuous_action.py --seed 584 --double_layer --save-model --env-id Walker2d-v4 --learning_starts 30000 --total-timesteps 500000 --save-model-folder Walker2d-v4_Group_Norm
+
+python cleanrl/td3_continuous_action.py --seed 168 --double_layer --save-model --env-id Hopper-v4 --learning_starts 30000 --total-timesteps 500000 --save-model-folder Hopper-v4_Group_Norm
+python cleanrl/td3_continuous_action.py --seed 493 --double_layer --save-model --env-id Hopper-v4 --learning_starts 30000 --total-timesteps 500000 --save-model-folder Hopper-v4_Group_Norm
+python cleanrl/td3_continuous_action.py --seed 527 --double_layer --save-model --env-id Hopper-v4 --learning_starts 30000 --total-timesteps 500000 --save-model-folder Hopper-v4_Group_Norm
+python cleanrl/td3_continuous_action.py --seed 534 --double_layer --save-model --env-id Hopper-v4 --learning_starts 30000 --total-timesteps 500000 --save-model-folder Hopper-v4_Group_Norm
+python cleanrl/td3_continuous_action.py --seed 584 --double_layer --save-model --env-id Hopper-v4 --learning_starts 30000 --total-timesteps 500000 --save-model-folder Hopper-v4_Group_Norm
