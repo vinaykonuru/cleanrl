@@ -94,10 +94,10 @@ class SoftQNetwork(nn.Module):
 
     def forward(self, x, a):
         x = torch.cat([x, a], 1)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
+        x = F.relu(F.group_norm(self.fc1(x), 16))
+        x = F.relu(F.group_norm(self.fc2(x), 16))
         if args.double_layer:
-            x = F.relu(self.fc3(x))
+            x = F.relu(F.group_norm(self.fc3(x), 16))
         x = self.fc4(x)
         return x
 
@@ -123,10 +123,10 @@ class Actor(nn.Module):
         )
 
     def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
+        x = F.relu(F.group_norm(self.fc1(x), 16))
+        x = F.relu(F.group_norm(self.fc2(x), 16))
         if args.double_layer:
-            x = F.relu(self.fc3(x))
+            x = F.relu(F.group_norm(self.fc3(x), 16))
         mean = self.fc_mean(x)
         log_std = self.fc_logstd(x)
         log_std = torch.tanh(log_std)

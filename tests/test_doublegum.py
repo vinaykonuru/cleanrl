@@ -70,7 +70,7 @@ def test_mujoco_eval(args):
 
         try:
             subprocess.run(
-                f"python cleanrl/dgum_continuous_action.py --seed {rand_int} {'--double_layer' if {args.double_layer} else ''} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}",
+                f"python cleanrl/dgum_continuous_action.py --seed {rand_int} {'--double_layer' if {args.double_layer} else ''} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}_process_3",
                 shell=True,
                 check=True,
             )
@@ -79,7 +79,7 @@ def test_mujoco_eval(args):
 
         try:    
             subprocess.run(
-                f"python cleanrl/ddpg_continuous_action.py --seed {rand_int} {'--double_layer' if {args.double_layer} else ''} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}",
+                f"python cleanrl/ddpg_continuous_action.py --seed {rand_int} {'--double_layer' if {args.double_layer} else ''} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}_process_3",
                 shell=True,
                 check=True,
             )
@@ -88,7 +88,7 @@ def test_mujoco_eval(args):
 
         try:
             subprocess.run(
-                f"python cleanrl/td3_continuous_action.py --seed {rand_int} {'--double_layer' if {args.double_layer} else ''} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}",
+                f"python cleanrl/td3_continuous_action.py --seed {rand_int} {'--double_layer' if {args.double_layer} else ''} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}_process_3",
                 shell=True,
                 check=True,
             )
@@ -97,7 +97,7 @@ def test_mujoco_eval(args):
         
         try:
             subprocess.run(
-                f"python cleanrl/sac_continuous_action.py --seed {rand_int} {'--double_layer' if {args.double_layer} else ''} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}",
+                f"python cleanrl/sac_continuous_action.py --seed {rand_int} {'--double_layer' if {args.double_layer} else ''} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}_process_3",
                 shell=True,
                 check=True,
             )
