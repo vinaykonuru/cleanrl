@@ -7,8 +7,19 @@ import os
 import numpy as np
 from env_normalization import normalization_values
 import json
+from typing import List
 
-def load_tensorboard_events(logdir):
+def smooth(scalars: List[float], weight: float) -> List[float]:  # Weight between 0 and 1
+    last = scalars[0]  # First value in the plot (first timestep)
+    smoothed = list()
+    for point in scalars:
+        smoothed_val = last * weight + (1 - weight) * point  # Calculate smoothed value
+        smoothed.append(smoothed_val)                        # Save it
+        last = smoothed_val                                  # Anchor the last smoothed value
+        
+    return smoothed
+
+def load_tensorboard_events(logdir, smoothing_weight=0.9):
     event_acc = EventAccumulator(logdir)
     event_acc.Reload()
 
@@ -22,7 +33,7 @@ def load_tensorboard_events(logdir):
         steps = [event.step for event in events]
         values = [event.value for event in events]
         data[tag] = {'steps': steps, 'values': values}
-
+        data[tag]['values'] = smooth(data[tag]['values'], smoothing_weight)
     return data
 
 # Calculates IQM for all algos on an env
@@ -104,9 +115,8 @@ def save_dict_to_file(dict_obj, file_name):
         json.dump(dict_obj, file)
 
 
-def main():
-    algs = ['dgum', 'ddpg', 'sac', 'td3']
-    envs = ['Hopper-v4']
+def calculate_env_iqms(algs, envs, smoothing_weight):
+    env_results = []
     for env in envs:
         results = get_iqm(f"runs/{env}", algs)
         min, max = normalization_values(env)
@@ -114,8 +124,5 @@ def main():
             print(results[alg]["iqm"])
             results[alg]["iqm"] = [(value - min) / (max - min) for value in results[alg]["iqm"]]
         save_dict_to_file(results, f'repro_utils/iqm_results/results_{env}.json')
-        plot_iqms(results)
-
-
-if __name__ == "__main__":
-    main()
+        env_results.append(results)
+    return env_results
