@@ -25,8 +25,9 @@ def load_tensorboard_events(logdir):
 
     return data
 
-def get_iqm(sub_folder_path):
-    algos = ['dgum', 'ddpg', 'td3']
+# Calculates IQM for all algos on an env
+# make sure that all the iterations of a given algorithm are trained for the same number of steps
+def get_iqm(sub_folder_path, algos):
 
     sf_path = Path(sub_folder_path)
 
@@ -51,8 +52,9 @@ def get_iqm(sub_folder_path):
             data = load_tensorboard_events(ev_path)['eval/training_avg']
             if steps is None:
                 steps = data['steps']
-            
+
             ep_returns.append(data['values'])
+
         ep_returns = np.array(ep_returns).T
 
         
@@ -103,10 +105,10 @@ def save_dict_to_file(dict_obj, file_name):
 
 
 def main():
-    algs = ['dgum', 'ddpg', 'td3']
+    algs = ['dgum', 'ddpg', 'sac', 'td3']
     envs = ['Hopper-v4']
     for env in envs:
-        results = get_iqm(f"runs/{env}")
+        results = get_iqm(f"runs/{env}", algs)
         min, max = normalization_values(env)
         for alg in algs:
             print(results[alg]["iqm"])
