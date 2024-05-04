@@ -9,7 +9,7 @@ import numpy as np
 class Args:
     num_trials: int = 1
     """number of trials for each algorithm"""
-    seed: int = 1
+    seed: int = 2
     """seed of the experiment"""
     torch_deterministic: bool = True
     """if toggled, `torch.backends.cudnn.deterministic=False`"""
@@ -67,7 +67,7 @@ def test_mujoco_eval(args):
     for _ in range(args.num_trials):
 
         rand_int = np.random.randint(low=0, high=1000)
-
+        print(rand_int)
         try:
             subprocess.run(
                 f"python cleanrl/dgum_continuous_action.py --seed {rand_int} {'--double_layer' if {args.double_layer} else ''} --save-model --env-id {args.env_id} --learning-starts {args.learning_starts} --batch-size 256 --total-timesteps {args.total_timesteps} --save-model-folder {args.env_id}_process_3",
