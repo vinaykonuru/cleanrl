@@ -29,7 +29,7 @@ def plot_single_iqms(steps, results, smoothing_weight):
 
     ax.set_xlabel("Training Step")
     ax.set_ylabel("IQM Episodic Returns")
-    ax.set_title(f"Evaluation with smoothing weight: {smoothing_weight}")
+    ax.set_title(f"Aggregate Evaluation with Smoothing Weight: {smoothing_weight}")
     ax.legend()  # add a legend to distinguish the different lines
 
     plt.savefig('repro_utils/iqm_results/iqm_plot.png')

@@ -9,7 +9,7 @@ import numpy as np
 class Args:
     num_trials: int = 1
     """number of trials for each algorithm"""
-    seed: int = 2
+    seed: int = 3
     """seed of the experiment"""
     torch_deterministic: bool = True
     """if toggled, `torch.backends.cudnn.deterministic=False`"""
